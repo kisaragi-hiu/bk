@@ -65,7 +65,6 @@ Options:
 (define (retrieve-or-set args)
   "Retrive an entry from bk-json, or set the value for an entry if given"
   (cond
-    [(= (vector-length args) 0) (help 1)]
     [(= (vector-length args) 1) (retrieve (vector-ref args 0))]
     [else (bk-set (vector-ref args 0) (vector-ref args 1))]))
 
@@ -88,6 +87,9 @@ Options:
 
 (define args (current-command-line-arguments))
 (define bk-json (build-path (getenv "HOME") ".bk.json"))
+
+(unless (> (vector-length args) 0)
+  (help 1))
 
 (case (vector-ref args 0)
   [("--list" "-l") (list-entries)]
