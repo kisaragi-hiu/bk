@@ -23,7 +23,7 @@
     Show help.
 
 ## Examples
-```
+```sh
 $ cat ~/.bk.json
 {}
 $ bk conf-kitty $HOME/.config/kitty/kitty.conf
