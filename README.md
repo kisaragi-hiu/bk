@@ -1,4 +1,4 @@
-# bk: command-line persistant key-value storage
+# bk: command-line key-value storage
 
 `bk` stores key-value pairs in a JSON file, and provides an interface to retrieve values. It is intended for command line bookmarks.
 
