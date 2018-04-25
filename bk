@@ -70,7 +70,9 @@ Options:
     [else (bk-set (vector-ref args 0) (vector-ref args 1))]))
 
 (define (retrieve key)
-  (displayln (hash-ref (string->jsexpr (file->string bk-json)) (string->symbol key))))
+  (displayln (hash-ref (string->jsexpr (file->string bk-json))
+                       (string->symbol key)
+                       (λ () (error 'retrieve "Key not found.")))))
 
 (define (bk-set key value)
   (define s (file->string bk-json))
