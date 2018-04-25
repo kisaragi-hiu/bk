@@ -22,6 +22,27 @@
 - `-h`, `--help`
     Show help.
 
+## Examples
+```
+$ cat ~/.bk.json
+{}
+$ bk conf-kitty $HOME/.config/kitty/kitty.conf
+$ bk conf-kitty
+/home/flyin1501/.config/kitty/kitty.conf
+$ cat ~/.bk.json
+{"conf-kitty":"/home/flyin1501/.config/kitty/kitty.conf"}
+$ bk --list
+conf-kitty
+$ bk --list-all
+conf-kitty: /home/flyin1501/.config/kitty/kitty.conf
+$ bk --delete conf-kitty
+$ bk --list
+
+$ cat ~/.bk.json
+{}
+```
+
 ## TODO
 
 - Rewrite in a language with faster startup time.
+- Initialize a new file if none exists.
