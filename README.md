@@ -21,3 +21,7 @@
     Delete `key`.
 - `-h`, `--help`
     Show help.
+
+## TODO
+
+- Rewrite in a language with faster startup time.
