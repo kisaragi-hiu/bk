@@ -1,0 +1,100 @@
+#!/usr/bin/env racket
+#lang racket
+(require lens
+         threading
+         json)
+
+(define (help [error-code 0])
+  (displayln "
+bk: key-value pair interface
+bk stores key-value pairs in a JSON file, and provides an interface to retrieve values. The file can be specified with the environment variable $BK_FILE, otherwise it is ~/.bk.json by default.
+
+Usage:
+  bk <options>
+  bk <key>: retrieve value for <key>
+  bk <key> <value>: set <key> to <value>
+
+Options:
+  -l, --list
+    list all keys
+  -a, --list-all
+    list all keys with their values
+  -d <key>, --delete <key>
+    delete <key> entry
+  -h, --help
+    show help (this message)")
+  (exit error-code))
+
+(define (list-entries)
+  "List entries in bk-json"
+  (define f bk-json)
+  (displayln
+    (~> (string->jsexpr (file->string f))
+        hash-keys
+        (map symbol->string _)
+        (string-join _ "\n"))))
+
+(define (list-all)
+  "List entries with their values in bk-json"
+  (define f bk-json)
+  (displayln
+    (~> (string->jsexpr (file->string f))
+        (hash-map _ (λ (k v)
+                       (string-append (symbol->string k)
+                                      ": "
+                                      v)))
+        (string-join _ "\n"))))
+
+(define (delete-entry! args)
+  "Delete an entry in bk-json"
+  ;; handle argument checks in here
+  (unless (> (vector-length args) 1)
+    (error 'delete-entry "further argument needed for --delete"))
+  ;; save the file contents first
+  (define s (file->string bk-json))
+  (call-with-output-file
+    bk-json
+    #:exists 'truncate
+    (λ (f)
+       (displayln
+         (~> (string->jsexpr s)
+             (hash-remove _ (string->symbol (vector-ref args 1)))
+             jsexpr->string)
+         f))))
+
+(define (retrieve-or-set args)
+  "Retrive an entry from bk-json, or set the value for an entry if given"
+  (cond
+    [(= (vector-length args) 0) (help 1)]
+    [(= (vector-length args) 1) (retrieve (vector-ref args 0))]
+    [else (bk-set (vector-ref args 0) (vector-ref args 1))]))
+
+(define (retrieve key)
+  (displayln (hash-ref (string->jsexpr (file->string bk-json)) (string->symbol key))))
+
+(define (bk-set key value)
+  (define s (file->string bk-json))
+  (call-with-output-file
+    bk-json
+    #:exists 'truncate
+    (λ (f)
+       (displayln
+         (~> (string->jsexpr s)
+             (hash-set _ (string->symbol key) value)
+             jsexpr->string)
+         f))))
+
+(define args (current-command-line-arguments))
+(define bk-json (build-path (getenv "HOME") ".bk.json"))
+
+(case (vector-ref args 0)
+  [("--list" "-l") (list-entries)]
+  [("--list-all" "-a") (list-all)]
+  [("--delete" "-d") (delete-entry! args)]
+  [("--help" "-h" "-?") (help)]
+  [else (retrieve-or-set args)])
+
+;; vim: filetype=racket
+;; Local Variables:
+;; mode: racket
+;; End:
