@@ -6,7 +6,11 @@ red="$(tput setaf 1)"
 green="$(tput setaf 2)"
 white="$(tput setaf 15)"
 
-bin=bk
+if [ -n "$1" ]; then
+    bin="$1"
+else
+    bin=bk
+fi
 scratch=$(mktemp --directory)
 trap 'rm -r $scratch' INT EXIT
 cd "$scratch" || exit 127
