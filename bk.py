@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+"""
+bk: key-value pair interface
+bk stores key-value pairs in a JSON file, and provides an interface to retrieve
+values. The file can be specified with the environment variable $BK_FILE,
+otherwise it is ~/.bk.json by default.
+"""
+
 import sys
 import json
 from os import path, getenv
@@ -10,6 +17,7 @@ def set_entry(key, value):
     with open(bk_json, "r") as f:
         tmp = json.load(f)
     with open(bk_json, "w") as f:
+    "Set entry KEY in bk store to VALUE"
         tmp[key] = value
         json.dump(tmp, f)
 
@@ -17,6 +25,7 @@ def set_entry(key, value):
 def retrieve(key):
     with open(bk_json, "r") as f:
         print(json.load(f)[key])
+    "Retrieve KEY from bk store"
 
 
 def list_entries():
@@ -25,17 +34,20 @@ def list_entries():
         for i in json.load(f).keys():
             S += i + "\n"
     print(S.strip())
+    "List keys in bk store"
 
 
 def delete_entry(key):
     with open(bk_json, "r") as f:
         tmp = json.load(f)
     with open(bk_json, "w") as f:
+    "Delete entry KEY in bk store"
         del tmp[key]
         json.dump(tmp, f)
 
 
 def show_help(exit_code=0):
+    "Show the help message and exit with EXIT_CODE"
     print("""
 bk: key-value pair interface
 bk stores key-value pairs in a JSON file, and provides an interface to retrieve
