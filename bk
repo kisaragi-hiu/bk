@@ -19,8 +19,6 @@ Options:
     initialize key-value store at $BK_FILE if set, or ~/.bk.json if not
   -l, --list
     list all keys
-  -a, --list-all
-    list all keys with their values
   -d <key>, --delete <key>
     delete <key> entry
   -h, --help
@@ -34,17 +32,6 @@ Options:
     (~> (string->jsexpr (file->string f))
         hash-keys
         (map symbol->string _)
-        (string-join _ "\n"))))
-
-(define (list-all)
-  "List entries with their values in bk-json"
-  (define f bk-json)
-  (displayln
-    (~> (string->jsexpr (file->string f))
-        (hash-map _ (λ (k v)
-                       (string-append (symbol->string k)
-                                      ": "
-                                      v)))
         (string-join _ "\n"))))
 
 (define (delete-entry! args)
@@ -102,7 +89,6 @@ Options:
 
 (case (vector-ref args 0)
   [("--list" "-l") (list-entries)]
-  [("--list-all" "-a") (list-all)]
   [("--delete" "-d") (delete-entry! args)]
   [("--help" "-h" "-?") (help)]
   [("--init") (init-file)]
