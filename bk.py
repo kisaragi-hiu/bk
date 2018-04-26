@@ -10,40 +10,53 @@ import sys
 import json
 from os import path, getenv
 
-bk_json = path.join(getenv("HOME"), ".bk.json")
+BK_JSON = getenv("BK_FILE") or path.join(getenv("HOME"), ".bk.json")
+
+
+def init_file():
+    "Initialize bk store"
+    with open(BK_JSON, "w") as bk_stream:
+        print("{}", file=bk_stream)
 
 
 def set_entry(key, value):
-    with open(bk_json, "r") as f:
-        tmp = json.load(f)
-    with open(bk_json, "w") as f:
     "Set entry KEY in bk store to VALUE"
+    if not path.isfile(BK_JSON):
+        init_file()
+    with open(BK_JSON, "r") as bk_stream:
+        tmp = json.load(bk_stream)
+    with open(BK_JSON, "w") as bk_stream:
         tmp[key] = value
-        json.dump(tmp, f)
+        json.dump(tmp, bk_stream)
 
 
 def retrieve(key):
-    with open(bk_json, "r") as f:
-        print(json.load(f)[key])
     "Retrieve KEY from bk store"
+    if not path.isfile(BK_JSON):
+        init_file()
+    with open(BK_JSON, "r") as bk_stream:
+        dct = json.load(bk_stream)
+        if key in dct:
+            print(dct[key])
+        else:
+            print("")
 
 
 def list_entries():
-    S = ""
-    with open(bk_json, "r") as f:
-        for i in json.load(f).keys():
-            S += i + "\n"
-    print(S.strip())
     "List keys in bk store"
+    if not path.isfile(BK_JSON):
+        init_file()
+    with open(BK_JSON, "r") as bk_stream:
+        print("".join(json.load(bk_stream).keys()).strip())
 
 
 def delete_entry(key):
-    with open(bk_json, "r") as f:
-        tmp = json.load(f)
-    with open(bk_json, "w") as f:
     "Delete entry KEY in bk store"
+    with open(BK_JSON, "r") as bk_stream:
+        tmp = json.load(bk_stream)
+    with open(BK_JSON, "w") as bk_stream:
         del tmp[key]
-        json.dump(tmp, f)
+        json.dump(tmp, bk_stream)
 
 
 def show_help(exit_code=0):
@@ -58,11 +71,12 @@ Usage:
   bk <options>
   bk <key>: retrieve value for <key>
   bk <key> <value>: set <key> to <value>
+
 Options:
+  --init
+    initialize key-value store at $BK_FILE if set, or ~/.bk.json if not
   -l, --list
     list all keys
-  -a, --list-all
-    list all keys with their values
   -d <key>, --delete <key>
     delete <key> entry
   -h, --help
@@ -72,6 +86,8 @@ Options:
 
 if len(sys.argv) < 2:
     show_help(1)
+elif sys.argv[1] in ["--init"]:
+    init_file()
 elif sys.argv[1] in ["--list", "-l"]:
     list_entries()
 elif sys.argv[1] in ["--delete", "-d"]:
