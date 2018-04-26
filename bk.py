@@ -1,8 +1,10 @@
+#!/usr/bin/env python
 import sys
 import json
 from os import path, getenv
 
 bk_json = path.join(getenv("HOME"), ".bk.json")
+
 
 def set_entry(key, value):
     with open(bk_json, "r") as f:
@@ -11,9 +13,11 @@ def set_entry(key, value):
         tmp[key] = value
         json.dump(tmp, f)
 
+
 def retrieve(key):
     with open(bk_json, "r") as f:
         print(json.load(f)[key])
+
 
 def list_entries():
     S = ""
@@ -22,6 +26,7 @@ def list_entries():
             S += i + "\n"
     print(S.strip())
 
+
 def delete_entry(key):
     with open(bk_json, "r") as f:
         tmp = json.load(f)
@@ -29,10 +34,14 @@ def delete_entry(key):
         del tmp[key]
         json.dump(tmp, f)
 
+
 def show_help(exit_code=0):
     print("""
 bk: key-value pair interface
-bk stores key-value pairs in a JSON file, and provides an interface to retrieve values. The file can be specified with the environment variable $BK_FILE, otherwise it is ~/.bk.json by default.
+bk stores key-value pairs in a JSON file, and provides an interface to retrieve
+values. The file can be specified with the environment variable $BK_FILE,
+otherwise it is ~/.bk.json by default.
+
 Usage:
   bk <options>
   bk <key>: retrieve value for <key>
@@ -47,6 +56,7 @@ Options:
   -h, --help
     show help (this message)""")
     sys.exit(exit_code)
+
 
 if len(sys.argv) < 2:
     show_help(1)
