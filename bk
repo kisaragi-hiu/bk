@@ -27,6 +27,8 @@ Options:
 
 (define (list-entries)
   "List entries in bk-json"
+  (unless (file-exists? bk-json)
+    (init-file))
   (define f bk-json)
   (displayln
     (~> (string->jsexpr (file->string f))
@@ -36,6 +38,8 @@ Options:
 
 (define (delete-entry! args)
   "Delete an entry in bk-json"
+  (unless (file-exists? bk-json)
+    (init-file))
   ;; handle argument checks in here
   (unless (> (vector-length args) 1)
     (error 'delete-entry "further argument needed for --delete"))
@@ -58,11 +62,15 @@ Options:
     [else (bk-set (vector-ref args 0) (vector-ref args 1))]))
 
 (define (retrieve key)
+  (unless (file-exists? bk-json)
+    (init-file))
   (displayln (hash-ref (string->jsexpr (file->string bk-json))
                        (string->symbol key)
                        (λ () (error 'retrieve "Key not found.")))))
 
 (define (bk-set key value)
+  (unless (file-exists? bk-json)
+    (init-file))
   (define s (file->string bk-json))
   (call-with-output-file
     bk-json
