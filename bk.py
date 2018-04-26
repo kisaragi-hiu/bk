@@ -95,6 +95,6 @@ elif sys.argv[1] in ["--delete", "-d"]:
 elif sys.argv[1] in ["--help", "-h"]:
     show_help(0)
 elif len(sys.argv) == 2:
-    retrieve(sys.argv[2])
+    retrieve(sys.argv[1])
 else:
-    set_entry(sys.argv[2], sys.argv[3])
+    set_entry(sys.argv[1], sys.argv[2])
