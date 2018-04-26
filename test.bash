@@ -1,5 +1,6 @@
 #!/bin/bash
 
+bin=bk
 scratch=$(mktemp --directory)
 trap 'rm -r $scratch' INT EXIT
 cd "$scratch" || exit 127
@@ -21,32 +22,32 @@ check () {
     return 1
 }
 
-check "bk --help" \
-      -n "$(bk --help)"
+check "$bin --help" \
+      -n "$($bin --help)"
 
-bk --init
-check "bk --init creates bk store" \
+$bin --init
+check "$bin --init creates bk store" \
       "$(cat "test.json")" == "{}"
 
-bk foo bar
+$bin foo bar
 check "foo has been set to bar" \
-      "$(bk foo)" == "bar"
+      "$($bin foo)" == "bar"
 
 check "foo is the only entry" \
-      "$(bk --list)" == "foo"
+      "$($bin --list)" == "foo"
 
 check "non-existent key returns empty string" \
-      "$(bk no)" == ""
+      "$($bin no)" == ""
 
-bk --delete foo
+$bin --delete foo
 check "foo has been deleted" \
       "$(cat "test.json")" == "{}"
 
 rm "test.json"
-bk foo bar
+$bin foo bar
 check "bk store is implicitly created" \
       -f "test.json"
 check "foo has been set to bar after implicit store creation" \
-      "$(bk foo)" == "bar"
+      "$($bin foo)" == "bar"
 
 echo "$check_success_count / $check_count succeeded, $check_fail_count failed."
