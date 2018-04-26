@@ -66,7 +66,8 @@ Options:
     (init-file))
   (displayln (hash-ref (string->jsexpr (file->string bk-json))
                        (string->symbol key)
-                       (λ () (error 'retrieve "Key not found.")))))
+                       ;; Non-existent key represents empty string
+                       "")))
 
 (define (bk-set key value)
   (unless (file-exists? bk-json)
