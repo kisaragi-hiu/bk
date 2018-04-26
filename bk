@@ -93,7 +93,9 @@ Options:
     (λ (f) (displayln "{}" f))))
 
 (define args (current-command-line-arguments))
-(define bk-json (build-path (getenv "HOME") ".bk.json"))
+(define bk-json
+  (or (getenv "BK_FILE")
+      (build-path (getenv "HOME") ".bk.json")))
 
 (unless (> (vector-length args) 0)
   (help 1))
