@@ -17,6 +17,8 @@ Usage:
 Options:
   --init
     initialize key-value store at $BK_FILE if set, or ~/.bk.json if not
+  --init --force
+    initialize key-value store, overwriting the existing file
   -l, --list
     list all keys
   -d <key>, --delete <key>
@@ -83,9 +85,11 @@ Options:
              jsexpr->string)
          f))))
 
-(define (init-file)
+(define (init-file [overwrite #f])
+  (define exists-flag (if overwrite 'update 'error))
   (call-with-output-file
     bk-json
+    #:exists exists-flag
     (λ (f) (displayln "{}" f))))
 
 (define args (current-command-line-arguments))
@@ -100,7 +104,8 @@ Options:
   [("--list" "-l") (list-entries)]
   [("--delete" "-d") (delete-entry! args)]
   [("--help" "-h" "-?") (help)]
-  [("--init") (init-file)]
+  [("--init") (init-file (and (> (vector-length args) 1)
+                              (equal? (vector-ref args 1) "--force")))]
   [else (retrieve-or-set args)])
 
 ;; vim: filetype=racket
