@@ -4,14 +4,21 @@ scratch=$(mktemp --directory)
 trap 'rm -r $scratch' INT EXIT
 cd "$scratch" || exit 127
 export BK_FILE="test.json"
+check_count=0
+check_fail_count=0
+check_success_count=0
 
 check () {
+    ((check_count+=1))
     local title="$1"; shift
     if test "$@"; then
         echo "Success: $title"
-    else
-        echo "Fail: $title"
+        ((check_success_count+=1))
+        return 0
     fi
+    echo "Fail: $title"
+    ((check_fail_count+=1))
+    return 1
 }
 
 check "bk --help" \
@@ -41,3 +48,5 @@ check "bk store is implicitly created" \
       -f "test.json"
 check "foo has been set to bar after implicit store creation" \
       "$(bk foo)" == "bar"
+
+echo "$check_success_count / $check_count succeeded, $check_fail_count failed."
