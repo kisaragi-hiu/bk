@@ -1,5 +1,11 @@
 #!/bin/bash
 
+bold="$(tput bold)"
+normal="$(tput sgr0)"
+red="$(tput setaf 1)"
+green="$(tput setaf 2)"
+white="$(tput setaf 15)"
+
 bin=bk
 scratch=$(mktemp --directory)
 trap 'rm -r $scratch' INT EXIT
@@ -13,11 +19,11 @@ check () {
     ((check_count+=1))
     local title="$1"; shift
     if test "$@"; then
-        echo "Success: $title"
+        echo "${bold}${green}Success: ${white}$title${normal}"
         ((check_success_count+=1))
         return 0
     fi
-    echo "Fail: $title"
+    echo "${bold}${red}Fail: ${white}$title${normal}"
     ((check_fail_count+=1))
     return 1
 }
