@@ -15,6 +15,8 @@ Usage:
   bk <key> <value>: set <key> to <value>
 
 Options:
+  --init
+    initialize key-value store at $BK_FILE if set, or ~/.bk.json if not
   -l, --list
     list all keys
   -a, --list-all
@@ -85,6 +87,11 @@ Options:
              jsexpr->string)
          f))))
 
+(define (init-file)
+  (call-with-output-file
+    bk-json
+    (λ (f) (displayln "{}" f))))
+
 (define args (current-command-line-arguments))
 (define bk-json (build-path (getenv "HOME") ".bk.json"))
 
@@ -96,6 +103,7 @@ Options:
   [("--list-all" "-a") (list-all)]
   [("--delete" "-d") (delete-entry! args)]
   [("--help" "-h" "-?") (help)]
+  [("--init") (init-file)]
   [else (retrieve-or-set args)])
 
 ;; vim: filetype=racket
