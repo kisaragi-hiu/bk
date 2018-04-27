@@ -47,7 +47,7 @@ def list_entries():
     if not path.isfile(BK_JSON):
         init_file()
     with open(BK_JSON, "r") as bk_stream:
-        print("".join(json.load(bk_stream).keys()).strip())
+        print("\n".join(json.load(bk_stream).keys()).strip())
 
 
 def delete_entry(key):
