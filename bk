@@ -1,13 +1,75 @@
-#!/usr/bin/env racket
-#lang racket
-(require lens
-         threading
-         json)
-
-(define (help [error-code 0])
-  (displayln "
+#!/usr/bin/env python
+"""
 bk: key-value pair interface
-bk stores key-value pairs in a JSON file, and provides an interface to retrieve values. The file can be specified with the environment variable $BK_FILE, otherwise it is ~/.bk.json by default.
+bk stores key-value pairs in a JSON file, and provides an interface to retrieve
+values. The file can be specified with the environment variable $BK_FILE,
+otherwise it is ~/.bk.json by default.
+"""
+
+import sys
+import json
+from os import path, getenv
+
+BK_JSON = getenv("BK_FILE") or path.join(getenv("HOME"), ".bk.json")
+sys.tracebacklimit = 0
+
+
+def init_file(force=False):
+    "Initialize bk store"
+    if path.isfile(BK_JSON) and not force:
+        raise FileExistsError(BK_JSON + " exists, not overwriting. " +
+                              "Use --force to overwrite regardless.")
+    with open(BK_JSON, "w") as bk_stream:
+        print("{}", file=bk_stream)
+
+
+def set_entry(key, value):
+    "Set entry KEY in bk store to VALUE"
+    if not path.isfile(BK_JSON):
+        init_file()
+    with open(BK_JSON, "r") as bk_stream:
+        tmp = json.load(bk_stream)
+    with open(BK_JSON, "w") as bk_stream:
+        tmp[key] = value
+        json.dump(tmp, bk_stream)
+
+
+def retrieve(key):
+    "Retrieve KEY from bk store"
+    if not path.isfile(BK_JSON):
+        init_file()
+    with open(BK_JSON, "r") as bk_stream:
+        dct = json.load(bk_stream)
+        if key in dct:
+            print(dct[key])
+        else:
+            print("")
+
+
+def list_entries():
+    "List keys in bk store"
+    if not path.isfile(BK_JSON):
+        init_file()
+    with open(BK_JSON, "r") as bk_stream:
+        print("\n".join(json.load(bk_stream).keys()).strip())
+
+
+def delete_entry(key):
+    "Delete entry KEY in bk store"
+    with open(BK_JSON, "r") as bk_stream:
+        tmp = json.load(bk_stream)
+    with open(BK_JSON, "w") as bk_stream:
+        del tmp[key]
+        json.dump(tmp, bk_stream)
+
+
+def show_help(exit_code=0):
+    "Show the help message and exit with EXIT_CODE"
+    print("""
+bk: key-value pair interface
+bk stores key-value pairs in a JSON file, and provides an interface to retrieve
+values. The file can be specified with the environment variable $BK_FILE,
+otherwise it is ~/.bk.json by default.
 
 Usage:
   bk <options>
@@ -17,98 +79,29 @@ Usage:
 Options:
   --init
     initialize key-value store at $BK_FILE if set, or ~/.bk.json if not
-  --init --force
-    initialize key-value store, overwriting the existing file
   -l, --list
     list all keys
   -d <key>, --delete <key>
     delete <key> entry
   -h, --help
-    show help (this message)")
-  (exit error-code))
+    show help (this message)""")
+    sys.exit(exit_code)
 
-(define (list-entries)
-  "List entries in bk-json"
-  (unless (file-exists? bk-json)
-    (init-file))
-  (define f bk-json)
-  (displayln
-    (~> (string->jsexpr (file->string f))
-        hash-keys
-        (map symbol->string _)
-        (string-join _ "\n"))))
 
-(define (delete-entry! args)
-  "Delete an entry in bk-json"
-  (unless (file-exists? bk-json)
-    (init-file))
-  ;; handle argument checks in here
-  (unless (> (vector-length args) 1)
-    (error 'delete-entry "further argument needed for --delete"))
-  ;; save the file contents first
-  (define s (file->string bk-json))
-  (call-with-output-file
-    bk-json
-    #:exists 'truncate
-    (λ (f)
-       (displayln
-         (~> (string->jsexpr s)
-             (hash-remove _ (string->symbol (vector-ref args 1)))
-             jsexpr->string)
-         f))))
-
-(define (retrieve-or-set args)
-  "Retrive an entry from bk-json, or set the value for an entry if given"
-  (cond
-    [(= (vector-length args) 1) (retrieve (vector-ref args 0))]
-    [else (bk-set (vector-ref args 0) (vector-ref args 1))]))
-
-(define (retrieve key)
-  (unless (file-exists? bk-json)
-    (init-file))
-  (displayln (hash-ref (string->jsexpr (file->string bk-json))
-                       (string->symbol key)
-                       ;; Non-existent key represents empty string
-                       "")))
-
-(define (bk-set key value)
-  (unless (file-exists? bk-json)
-    (init-file))
-  (define s (file->string bk-json))
-  (call-with-output-file
-    bk-json
-    #:exists 'truncate
-    (λ (f)
-       (displayln
-         (~> (string->jsexpr s)
-             (hash-set _ (string->symbol key) value)
-             jsexpr->string)
-         f))))
-
-(define (init-file [overwrite? #f])
-  ;; call-with-output-file #:exists 'update seems to keep some old file content
-  ;; just delete the old one if it exists and we've been instructed to
-  (when (and overwrite? (file-exists? bk-json))
-    (delete-file bk-json))
-  (call-with-output-file bk-json (λ (f) (displayln "{}" f))))
-
-(define args (current-command-line-arguments))
-(define bk-json
-  (or (getenv "BK_FILE")
-      (build-path (getenv "HOME") ".bk.json")))
-
-(unless (> (vector-length args) 0)
-  (help 1))
-
-(case (vector-ref args 0)
-  [("--list" "-l") (list-entries)]
-  [("--delete" "-d") (delete-entry! args)]
-  [("--help" "-h" "-?") (help)]
-  [("--init") (init-file (and (> (vector-length args) 1)
-                              (equal? (vector-ref args 1) "--force")))]
-  [else (retrieve-or-set args)])
-
-;; vim: filetype=racket
-;; Local Variables:
-;; mode: racket
-;; End:
+if len(sys.argv) < 2:
+    show_help(1)
+elif sys.argv[1] in ["--init"]:
+    if len(sys.argv) == 3 and sys.argv[2] in ["--force"]:
+        init_file(force=True)
+    else:
+        init_file()
+elif sys.argv[1] in ["--list", "-l"]:
+    list_entries()
+elif sys.argv[1] in ["--delete", "-d"]:
+    delete_entry(sys.argv[2])
+elif sys.argv[1] in ["--help", "-h"]:
+    show_help(0)
+elif len(sys.argv) == 2:
+    retrieve(sys.argv[1])
+else:
+    set_entry(sys.argv[1], sys.argv[2])
