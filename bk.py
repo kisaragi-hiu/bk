@@ -11,6 +11,7 @@ import json
 from os import path, getenv
 
 BK_JSON = getenv("BK_FILE") or path.join(getenv("HOME"), ".bk.json")
+sys.tracebacklimit = 0
 
 
 def init_file():
