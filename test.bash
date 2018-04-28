@@ -39,6 +39,14 @@ $bin --init
 check "$bin --init creates bk store" \
       "$(cat "test.json")" == "{}"
 
+check "$bin --init fails if a bk store is present" \
+      "$($bin --init; echo "$?")" != "0"
+
+echo "junk" > "test.json"
+$bin --init --force
+check "$bin --init --force overwrites current bk store" \
+      "$(cat "test.json")" == "{}"
+
 $bin foo bar
 check "foo has been set to bar" \
       "$($bin foo)" == "bar"
