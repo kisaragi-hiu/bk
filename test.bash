@@ -46,12 +46,16 @@ check "foo has been set to bar" \
 check "foo is the only entry" \
       "$($bin --list)" == "foo"
 
+$bin txt text
+check "listing format after adding a second entry" \
+      "$($bin --list | sort)" == "$(echo foo; echo txt)"
+
 check "non-existent key returns empty string" \
       "$($bin no)" == ""
 
 $bin --delete foo
 check "foo has been deleted" \
-      "$(cat "test.json")" == "{}"
+      "$(grep -q "foo" "test.json"; echo "$?")" == "1"
 
 rm "test.json"
 $bin foo bar
