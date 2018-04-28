@@ -73,3 +73,5 @@ check "foo has been set to bar after implicit store creation" \
       "$($bin foo)" == "bar"
 
 echo "$check_success_count / $check_count succeeded, $check_fail_count failed."
+
+[ $check_success_count -eq $check_count ] && exit 0
