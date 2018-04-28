@@ -85,8 +85,8 @@ Options:
              jsexpr->string)
          f))))
 
-(define (init-file [overwrite #f])
-  (define exists-flag (if overwrite 'update 'error))
+(define (init-file [overwrite? #f])
+  (define exists-flag (if overwrite? 'update 'error))
   (call-with-output-file
     bk-json
     #:exists exists-flag
