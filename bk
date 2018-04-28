@@ -86,11 +86,11 @@ Options:
          f))))
 
 (define (init-file [overwrite? #f])
-  (define exists-flag (if overwrite? 'update 'error))
-  (call-with-output-file
-    bk-json
-    #:exists exists-flag
-    (λ (f) (displayln "{}" f))))
+  ;; call-with-output-file #:exists 'update seems to keep some old file content
+  ;; just delete the old one if it exists and we've been instructed to
+  (when (and overwrite? (file-exists? bk-json))
+    (delete-file bk-json))
+  (call-with-output-file bk-json (λ (f) (displayln "{}" f))))
 
 (define args (current-command-line-arguments))
 (define bk-json
