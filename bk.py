@@ -14,8 +14,11 @@ BK_JSON = getenv("BK_FILE") or path.join(getenv("HOME"), ".bk.json")
 sys.tracebacklimit = 0
 
 
-def init_file():
+def init_file(force=False):
     "Initialize bk store"
+    if path.isfile(BK_JSON) and not force:
+        raise FileExistsError(BK_JSON + " exists, not overwriting. " +
+                              "Use --force to overwrite regardless.")
     with open(BK_JSON, "w") as bk_stream:
         print("{}", file=bk_stream)
 
@@ -88,7 +91,10 @@ Options:
 if len(sys.argv) < 2:
     show_help(1)
 elif sys.argv[1] in ["--init"]:
-    init_file()
+    if len(sys.argv) == 3 and sys.argv[2] in ["--force"]:
+        init_file(force=True)
+    else:
+        init_file()
 elif sys.argv[1] in ["--list", "-l"]:
     list_entries()
 elif sys.argv[1] in ["--delete", "-d"]:
