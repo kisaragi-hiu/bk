@@ -6,7 +6,7 @@
 
 I wrote this mainly for command line bookmarks, so I can do `cd (bk projects)` to quickly get to my projects folder, for example.
 
-I don't want to use shell variables because ut can potentially intefere with some scripts, and because they have character restrictions quite a lot stricter than JSON strings, the way I'm storing it here.
+I don't want to use shell variables because it can potentially intefere with some scripts, and because they have character restrictions quite a lot stricter than JSON strings, the way I'm storing it here.
 
 ## Usage
 
