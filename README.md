@@ -29,6 +29,10 @@ I don't want to use shell variables because it can potentially intefere with som
 - `-h`, `--help`  
     Show help.
 
+## Configuration
+
+Set the variable `BK_FILE` to where you want `bk` to keep the file where the pairs are stored. If it's unset, then `~/.bk.json` is used.
+
 ## Examples
 ```sh
 $ cat ~/.bk.json
