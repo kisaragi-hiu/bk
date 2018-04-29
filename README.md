@@ -13,13 +13,14 @@
 
 ## Options
 
-- `-l`, `--list`
+- `-l`, `--list`  
     List all keys.
-- `-a`, `--list-all`
-    List all keys and values.
-- `-d <key>`, `--delete <key>`
+- `-d <key>`, `--delete <key>`  
     Delete `key`.
-- `-h`, `--help`
+- `--init [--force]`  
+    Initialize key-value store.
+    --force overwrites the current file if it exists.
+- `-h`, `--help`  
     Show help.
 
 ## Examples
@@ -33,8 +34,6 @@ $ cat ~/.bk.json
 {"conf-kitty":"/home/flyin1501/.config/kitty/kitty.conf"}
 $ bk --list
 conf-kitty
-$ bk --list-all
-conf-kitty: /home/flyin1501/.config/kitty/kitty.conf
 $ bk --delete conf-kitty
 $ bk --list
 
