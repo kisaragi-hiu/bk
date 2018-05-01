@@ -7,7 +7,7 @@
 (define (help [error-code 0])
   (displayln "
 bk: key-value pair interface
-bk stores key-value pairs in a JSON file, and provides an interface to retrieve values. The file can be specified with the environment variable $BK_FILE, otherwise it is ~/.bk.json by default.
+bk stores key-value pairs in a JSON file, and provides an interface to retrieve values. The file can be specified with the environment variable $BK_FILE, otherwise it is ~/.local/share/bk/bk.json by default.
 
 Usage:
   bk <options>
@@ -16,7 +16,7 @@ Usage:
 
 Options:
   --init
-    initialize key-value store at $BK_FILE if set, or ~/.bk.json if not
+    initialize key-value store at $BK_FILE if set, or ~/.local/share/bk/bk.json if not
   --init --force
     initialize key-value store, overwriting the existing file
   -l, --list
@@ -90,12 +90,17 @@ Options:
   ;; just delete the old one if it exists and we've been instructed to
   (when (and overwrite? (file-exists? bk-json))
     (delete-file bk-json))
+  (unless (directory-exists? (path-only bk-json))
+    (make-directory* (path-only bk-json)))
   (call-with-output-file bk-json (λ (f) (displayln "{}" f))))
 
 (define args (current-command-line-arguments))
+(define xdg-data
+  (or (getenv "XDG_DATA_HOME")
+      (build-path (getenv "HOME") ".local" "share")))
 (define bk-json
   (or (getenv "BK_FILE")
-      (build-path (getenv "HOME") ".bk.json")))
+      (build-path xdg-data "bk" "bk.json")))
 
 (unless (> (vector-length args) 0)
   (help 1))

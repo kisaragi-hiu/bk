@@ -31,22 +31,22 @@ I don't want to use shell variables because it can potentially intefere with som
 
 ## Configuration
 
-Set the variable `BK_FILE` to where you want `bk` to keep the file where the pairs are stored. If it's unset, then `~/.bk.json` is used.
+Set the variable `BK_FILE` to where you want `bk` to keep the file where the pairs are stored. If it's unset, then `~/.local/share/bk/bk.json` is used.
 
 ## Examples
 ```sh
-$ cat ~/.bk.json
+$ cat ~/.local/share/bk/bk.json
 {}
 $ bk conf-kitty $HOME/.config/kitty/kitty.conf
 $ bk conf-kitty
 /home/flyin1501/.config/kitty/kitty.conf
-$ cat ~/.bk.json
+$ cat ~/.local/share/bk/bk.json
 {"conf-kitty":"/home/flyin1501/.config/kitty/kitty.conf"}
 $ bk --list
 conf-kitty
 $ bk --delete conf-kitty
 $ bk --list
 
-$ cat ~/.bk.json
+$ cat ~/.local/share/bk/bk.json
 {}
 ```

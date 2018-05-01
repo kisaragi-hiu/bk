@@ -3,14 +3,15 @@
 bk: key-value pair interface
 bk stores key-value pairs in a JSON file, and provides an interface to retrieve
 values. The file can be specified with the environment variable $BK_FILE,
-otherwise it is ~/.bk.json by default.
+otherwise it is ~/.local/share/bk/bk.json by default.
 """
 
 import sys
 import json
-from os import path, getenv
+from os import path, getenv, makedirs
 
-BK_JSON = getenv("BK_FILE") or path.join(getenv("HOME"), ".bk.json")
+DATA = getenv("XDG_DATA_DIR") or path.join(getenv("HOME"), ".local", "share")
+BK_JSON = getenv("BK_FILE") or path.join(DATA, "bk", "bk.json")
 sys.tracebacklimit = 0
 
 
@@ -19,6 +20,8 @@ def init_file(force=False):
     if path.isfile(BK_JSON) and not force:
         raise FileExistsError(BK_JSON + " exists, not overwriting. " +
                               "Use --force to overwrite regardless.")
+    if not path.isdir(path.dirname(BK_JSON)):
+        makedirs(path.dirname(BK_JSON))
     with open(BK_JSON, "w") as bk_stream:
         print("{}", file=bk_stream)
 
@@ -69,7 +72,7 @@ def show_help(exit_code=0):
 bk: key-value pair interface
 bk stores key-value pairs in a JSON file, and provides an interface to retrieve
 values. The file can be specified with the environment variable $BK_FILE,
-otherwise it is ~/.bk.json by default.
+otherwise it is ~/.local/share/bk/bk.json by default.
 
 Usage:
   bk <options>
@@ -78,7 +81,7 @@ Usage:
 
 Options:
   --init
-    initialize key-value store at $BK_FILE if set, or ~/.bk.json if not
+    initialize key-value store at $BK_FILE if set, or ~/.local/share/bk/bk.json if not
   -l, --list
     list all keys
   -d <key>, --delete <key>
