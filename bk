@@ -42,9 +42,9 @@ def retrieve(key):
     if not path.isfile(BK_JSON):
         init_file()
     with open(BK_JSON, "r") as bk_stream:
-        dct = json.load(bk_stream)
-        if key in dct:
-            print(dct[key])
+        tmp = json.load(bk_stream)
+        if key in tmp:
+            print(tmp[key])
         else:
             print("")
 
