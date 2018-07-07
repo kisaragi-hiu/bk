@@ -81,10 +81,11 @@ Usage:
 
 Options:
   --init
-    initialize key-value store at $BK_FILE if set, or ~/.local/share/bk/bk.json if not
+    initialize key-value store at $BK_FILE if set, or
+    ~/.local/share/bk/bk.json if not
   -l, --list
     list all keys
-  -d <key>, --delete <key>
+  -d, --delete=KEY
     delete <key> entry
   -h, --help
     show help (this message)""")
@@ -102,6 +103,8 @@ elif sys.argv[1] in ["--list", "-l"]:
     list_entries()
 elif sys.argv[1] in ["--delete", "-d"]:
     delete_entry(sys.argv[2])
+elif sys.argv[1].startswith("--delete="):
+    delete_entry(sys.argv[1].replace("--delete=", "", 1))
 elif sys.argv[1] in ["--help", "-h"]:
     show_help(0)
 elif len(sys.argv) == 2:

@@ -21,8 +21,8 @@ Options:
     initialize key-value store, overwriting the existing file
   -l, --list
     list all keys
-  -d <key>, --delete <key>
-    delete <key> entry
+  -d , --delete=KEY
+    delete KEY entry
   -h, --help
     show help (this message)")
   (exit error-code))
@@ -43,19 +43,24 @@ Options:
   (unless (file-exists? bk-json)
     (init-file))
   ;; handle argument checks in here
-  (unless (> (vector-length args) 1)
-    (error 'delete-entry "further argument needed for --delete"))
+  (define key
+    (cond [(string-prefix? (vector-ref args 0) "--delete=")
+           (string-replace #rx"^--delete=" "" (vector-ref args 0))]
+          [(> (vector-length args) 1)
+           (string->symbol (vector-ref args 1))]
+          [else
+           (error 'delete-entry "further argument needed for --delete")]))
   ;; save the file contents first
   (define s (file->string bk-json))
   (call-with-output-file
     bk-json
     #:exists 'truncate
     (λ (f)
-       (displayln
-         (~> (string->jsexpr s)
-             (hash-remove _ (string->symbol (vector-ref args 1)))
-             jsexpr->string)
-         f))))
+      (displayln
+       (~> (string->jsexpr s)
+           (hash-remove _ key)
+           jsexpr->string)
+       f))))
 
 (define (retrieve-or-set args)
   "Retrive an entry from bk-json, or set the value for an entry if given"
@@ -105,13 +110,22 @@ Options:
 (unless (> (vector-length args) 0)
   (help 1))
 
-(case (vector-ref args 0)
-  [("--list" "-l") (list-entries)]
-  [("--delete" "-d") (delete-entry! args)]
-  [("--help" "-h" "-?") (help)]
-  [("--init") (init-file (and (> (vector-length args) 1)
-                              (equal? (vector-ref args 1) "--force")))]
-  [else (retrieve-or-set args)])
+(let ([$1 (vector-ref args 0)])
+  (cond
+    [(or (string-contains? $1 "--list")
+         (string-contains? $1 "-l"))
+     (list-entries)]
+    [(or (string-contains? $1 "--delete")
+         (string-contains? $1 "-d"))
+     (delete-entry! args)]
+    [(or (string-contains? $1 "--help")
+         (string-contains? $1 "-h")
+         (string-contains? $1 "-?"))
+     (help)]
+    [(string-contains? $1 "--init")
+     (init-file (and (> (vector-length args) 1)
+                     (equal? (vector-ref args 1) "--force")))]
+    [else (retrieve-or-set args)]))
 
 ;; vim: filetype=racket
 ;; Local Variables:
