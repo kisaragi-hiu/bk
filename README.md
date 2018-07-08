@@ -19,15 +19,22 @@ I don't want to use shell variables because it can potentially intefere with som
 
 ## Options
 
-- `-l`, `--list`  
+- `-l`, `--list`<br>
     List all keys.
-- `-d <key>`, `--delete <key>`  
+- `-d <key>`, `--delete <key>`<br>
     Delete `key`.
-- `--init [--force]`  
+- `--init [--force]`<br>
     Initialize key-value store.
     --force overwrites the current file if it exists.
-- `-h`, `--help`  
+- `-h`, `--help`<br>
     Show help.
+
+## Install
+
+Chuck `bk` into your `$PATH`, then add `completions/<shell>` to your shell's completion path.
+
+- zsh: `set -A fpath /path/to/bk/completions/zsh $fpath`
+- fish: `set fpath /path/to/bk/completions/fish $fpath`
 
 ## Configuration
 
