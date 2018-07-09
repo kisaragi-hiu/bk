@@ -1,9 +1,10 @@
 #compdef bk
-local bk_list
+
+local -a bk_list
 local IFS="
 "
-# compdef _gnu_generic bk
 
 bk_list=($(bk --list))
 
-_describe bk bk_list
+_arguments '*::' --
+_describe 'bk' bk_list
