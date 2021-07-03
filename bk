@@ -10,7 +10,7 @@ import sys
 import json
 from os import path, getenv, makedirs
 
-DATA = getenv("XDG_DATA_DIR") or path.join(getenv("HOME"), ".local", "share")
+DATA = getenv("XDG_DATA_HOME") or path.join(getenv("HOME"), ".local", "share")
 BK_JSON = getenv("BK_FILE") or path.join(DATA, "bk", "bk.json")
 sys.tracebacklimit = 0
 
