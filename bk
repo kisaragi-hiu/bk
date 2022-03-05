@@ -23,8 +23,9 @@ def init_file(force=False):
             + " exists, not overwriting. "
             + "Use --force to overwrite regardless."
         )
-    if not path.isdir(path.dirname(BK_JSON)):
-        makedirs(path.dirname(BK_JSON))
+    dirname = path.dirname(BK_JSON)
+    if (not path.isdir(dirname)) and dirname != "":
+        makedirs(dirname)
     with open(BK_JSON, "w") as bk_stream:
         print("{}", file=bk_stream)
 
