@@ -54,6 +54,9 @@ check "foo has been set to bar" \
 check "foo is the only entry" \
       "$($bin --list)" == "foo"
 
+check "zero argument also means list" \
+      "$($bin)" == "foo"
+
 $bin txt text
 check "listing format after adding a second entry" \
       "$($bin --list | sort)" == "$(echo foo; echo txt)"
