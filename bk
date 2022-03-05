@@ -18,8 +18,11 @@ sys.tracebacklimit = 0
 def init_file(force=False):
     "Initialize bk store"
     if path.isfile(BK_JSON) and not force:
-        raise FileExistsError(BK_JSON + " exists, not overwriting. " +
-                              "Use --force to overwrite regardless.")
+        raise FileExistsError(
+            BK_JSON
+            + " exists, not overwriting. "
+            + "Use --force to overwrite regardless."
+        )
     if not path.isdir(path.dirname(BK_JSON)):
         makedirs(path.dirname(BK_JSON))
     with open(BK_JSON, "w") as bk_stream:
@@ -68,7 +71,8 @@ def delete_entry(key):
 
 def show_help(exit_code=0):
     "Show the help message and exit with EXIT_CODE"
-    print("""
+    print(
+        """
 bk: key-value pair interface
 bk stores key-value pairs in a JSON file, and provides an interface to retrieve
 values. The file can be specified with the environment variable $BK_FILE,
@@ -88,7 +92,8 @@ Options:
   -d, --delete=KEY
     delete <key> entry
   -h, --help
-    show help (this message)""")
+    show help (this message)"""
+    )
     sys.exit(exit_code)
 
 
