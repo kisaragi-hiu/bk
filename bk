@@ -38,7 +38,7 @@ def set_entry(key, value):
         tmp = json.load(bk_stream)
     with open(BK_JSON, "w") as bk_stream:
         tmp[key] = value
-        json.dump(tmp, bk_stream)
+        json.dump(tmp, bk_stream, indent=2)
 
 
 def retrieve(key):
@@ -67,7 +67,7 @@ def delete_entry(key):
         tmp = json.load(bk_stream)
     with open(BK_JSON, "w") as bk_stream:
         del tmp[key]
-        json.dump(tmp, bk_stream)
+        json.dump(tmp, bk_stream, indent=2)
 
 
 def show_help(exit_code=0):
