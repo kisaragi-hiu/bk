@@ -59,6 +59,7 @@ def reverse_lookup(value):
         init_file()
     with open(BK_JSON, "r") as bk_stream:
         tmp = json.load(bk_stream)
+        # Thanks https://stackoverflow.com/a/2569074/6927814
         reverse = {v: k for k, v in tmp.items()}
         if value in reverse:
             print(reverse[value])
