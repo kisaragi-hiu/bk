@@ -8,9 +8,9 @@ otherwise it is ~/.local/share/bk/bk.json by default.
 
 import sys
 import json
-from os import path, getenv, makedirs
+from os import path, getenv, makedirs, getcwd
 
-DATA = getenv("XDG_DATA_HOME") or path.join(getenv("HOME"), ".local", "share")
+DATA = getenv("XDG_DATA_HOME") or path.join(getenv("HOME") or "./", ".local", "share")
 BK_JSON = getenv("BK_FILE") or path.join(DATA, "bk", "bk.json")
 sys.tracebacklimit = 0
 
@@ -53,6 +53,19 @@ def retrieve(key):
             print("")
 
 
+def reverse_lookup(value):
+    "Print the key for VALUE in the bk store"
+    if not path.isfile(BK_JSON):
+        init_file()
+    with open(BK_JSON, "r") as bk_stream:
+        tmp = json.load(bk_stream)
+        reverse = {v: k for k, v in tmp.items()}
+        if value in reverse:
+            print(reverse[value])
+        else:
+            print("")
+
+
 def list_entries():
     "List keys in bk store"
     if not path.isfile(BK_JSON):
@@ -91,6 +104,10 @@ Options:
     ~/.local/share/bk/bk.json if not
   -l, --list
     list all keys
+  --here
+    print the key for $(pwd), if any
+  --here KEY, --here=KEY
+    set KEY to $(pwd)
   -d, --delete=KEY
     delete <key> entry
   -h, --help
@@ -112,6 +129,13 @@ elif sys.argv[1] in ["--delete", "-d"]:
     delete_entry(sys.argv[2])
 elif sys.argv[1].startswith("--delete="):
     delete_entry(sys.argv[1].replace("--delete=", "", 1))
+elif sys.argv[1].startswith("--here="):
+    set_entry(sys.argv[1].replace("--here=", "", 1), getcwd())
+elif sys.argv[1] in ["--here"]:
+    if len(sys.argv) >= 3:
+        set_entry(sys.argv[2], getcwd())
+    else:
+        reverse_lookup(getcwd())
 elif sys.argv[1] in ["--help", "-h"]:
     show_help(0)
 elif len(sys.argv) == 2:  # One argument that isn't one of the above
